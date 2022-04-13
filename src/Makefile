@@ -19,7 +19,8 @@ PREFIX ?= $(PWD)/..
 INSTALL = /usr/bin/install
 PKGCONFIG = /usr/bin/pkg-config
 
-SMS ?= 30 35 37 50 52 60 61 70
+#SMS ?= 30 35 37 50 52 60 61 70
+SMS ?= 86
 GENCODE_FLAGS += $(foreach sm,$(SMS),-gencode arch=compute_$(sm),code=sm_$(sm))
 
 CXX ?= g++
