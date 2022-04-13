@@ -149,12 +149,14 @@ void export_data(char* filename, double data){
 void export_usage(string kname, double data) {
   char filename[40];
   sprintf(filename, "/kubeshare/scheduler/totalusage-%s", kname.c_str());
+  INFO("%s totalusage: %f ", kname.c_str(), data);
   export_data(filename, data);
 }
 
 void export_quota(string kname, double data) {
   char filename[40];
   sprintf(filename, "/kubeshare/scheduler/assigedquota-%s", kname.c_str());
+  INFO("%s assigedquota: %f ", kname.c_str(), data);
   export_data(filename, data);
 }
 
