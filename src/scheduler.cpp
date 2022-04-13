@@ -124,6 +124,7 @@ ClientGroup::ClientGroup(std::string name, double baseq, double minq)
   quota_ = baseq;
   latest_overuse_ = 0.0;
   latest_actual_usage_ = 0.0;
+  total_actual_usage_ = 0.0;
   burst_ = 0.0;
   sem_init(&token_sem_, 0, 0);  // set initial value to 0
 };
@@ -139,6 +140,24 @@ void ClientGroup::updateConstraint(double minf, double maxf, double maxq, size_t
   mem_limit_ = mem_limit;
 }
 
+void export_data(char* filename, double data){
+  FILE *f = fopen(filename, "w");
+  fprintf(f, "%f", data);
+  fclose(f);
+}
+
+void export_usage(string kname, double data) {
+  char filename[40];
+  sprintf(filename, "/kubeshare/scheduler/totalusage-%s", kname.c_str());
+  export_data(filename, data);
+}
+
+void export_quota(string kname, double data) {
+  char filename[40];
+  sprintf(filename, "/kubeshare/scheduler/assigedquota-%s", kname.c_str());
+  export_data(filename, data);
+}
+
 /**
  * Update the end time of client's usage according to the overuse information provided when client
  * sends another token request, and also the timing when token request is received.
@@ -151,6 +170,8 @@ void ClientGroup::updateReturnTime(double overuse) {
       // client may not use up all of the allocated time
       it->end = std::min(now, it->end + overuse);
       latest_actual_usage_ = it->end - it->start;
+      total_actual_usage_ += latest_actual_usage_;
+      export_usage(kName, total_actual_usage_);
       break;
     }
   }
@@ -196,6 +217,7 @@ void ClientGroup::updateQuota() {
     quota_ = burst_ * UPDATE_RATE + quota_ * (1 - UPDATE_RATE);
     quota_ = std::max(quota_, kMinQuota);   // lowerbound
     quota_ = std::min(quota_, max_quota_);  // upperbound
+    export_quota(kName, quota_);
     DEBUG("%s: burst: %.3fms, assign quota: %.3fms", kName.c_str(), burst_, quota_);
   }
 }

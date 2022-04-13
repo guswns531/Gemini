@@ -62,6 +62,7 @@ class ClientGroup {
   double quota_;
   double latest_overuse_;
   double latest_actual_usage_;  // client may return eariler (before quota expire)
+  double total_actual_usage_;  // client may return eariler (before quota expire)
   double burst_;                // duration of kernel burst
   sem_t token_sem_;
 };
