@@ -173,7 +173,8 @@ void ClientGroup::updateReturnTime(double overuse) {
       it->end = std::min(now, it->end + overuse);
       latest_actual_usage_ = it->end - it->start;
       total_actual_usage_ += latest_actual_usage_;
-      export_usage(kName, total_actual_usage_);
+      INFO("Actal_usage = %f, %f", latest_actual_usage_, total_actual_usage_);
+      // export_usage(kName, total_actual_usage_);
       break;
     }
   }
@@ -219,7 +220,8 @@ void ClientGroup::updateQuota() {
     quota_ = burst_ * UPDATE_RATE + quota_ * (1 - UPDATE_RATE);
     quota_ = std::max(quota_, kMinQuota);   // lowerbound
     quota_ = std::min(quota_, max_quota_);  // upperbound
-    export_quota(kName, quota_);
+    INFO("Assigned Quota = %f, Min %f Max %f", quota_, kMinQuota, max_quota_);
+    // export_quota(kName, quota_);
     DEBUG("%s: burst: %.3fms, assign quota: %.3fms", kName.c_str(), burst_, quota_);
   }
 }
