@@ -142,21 +142,21 @@ void ClientGroup::updateConstraint(double minf, double maxf, double maxq, size_t
 
 void export_data(char* filename, double data){
   FILE *f = fopen(filename, "w");
-  fprintf(f, "%f", data);
+  fprintf(f, "%f\n", data);
   fclose(f);
 }
 
 void export_usage(string kname, double data) {
-  char filename[40];
-  sprintf(filename, "/kubeshare/scheduler/totalusage-%s", kname.c_str());
-  INFO("%s totalusage: %f ", kname.c_str(), data);
+  char filename[100];
+  sprintf(filename, "/kubeshare/scheduler/total-usage-%s", kname.c_str());
+  // INFO("%s totalusage: %f ", kname.c_str(), data);
   export_data(filename, data);
 }
 
 void export_quota(string kname, double data) {
-  char filename[40];
-  sprintf(filename, "/kubeshare/scheduler/assigedquota-%s", kname.c_str());
-  INFO("%s assigedquota: %f ", kname.c_str(), data);
+  char filename[100];
+  sprintf(filename, "/kubeshare/scheduler/assiged-quota-%s", kname.c_str());
+  // INFO("%s assigedquota: %f ", kname.c_str(), data);
   export_data(filename, data);
 }
 
@@ -173,8 +173,8 @@ void ClientGroup::updateReturnTime(double overuse) {
       it->end = std::min(now, it->end + overuse);
       latest_actual_usage_ = it->end - it->start;
       total_actual_usage_ += latest_actual_usage_;
-      INFO("Actal_usage = %f, %f", latest_actual_usage_, total_actual_usage_);
-      // export_usage(kName, total_actual_usage_);
+      // INFO("Actal_usage = %f, %f", latest_actual_usage_, total_actual_usage_);
+      export_usage(kName, total_actual_usage_);
       break;
     }
   }
@@ -220,8 +220,8 @@ void ClientGroup::updateQuota() {
     quota_ = burst_ * UPDATE_RATE + quota_ * (1 - UPDATE_RATE);
     quota_ = std::max(quota_, kMinQuota);   // lowerbound
     quota_ = std::min(quota_, max_quota_);  // upperbound
-    INFO("Assigned Quota = %f, Min %f Max %f", quota_, kMinQuota, max_quota_);
-    // export_quota(kName, quota_);
+    // INFO("Assigned Quota = %f, Min %f Max %f", quota_, kMinQuota, max_quota_);
+    export_quota(kName, quota_);
     DEBUG("%s: burst: %.3fms, assign quota: %.3fms", kName.c_str(), burst_, quota_);
   }
 }

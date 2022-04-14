@@ -88,3 +88,5 @@ comm:
 clean:
 	@$(MAKE) -C comm clean
 	rm -f *.o
+	rm -f ../bin/*
+	rm -f ../lib/*
