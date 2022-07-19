@@ -148,17 +148,17 @@ void export_data(char* filename, double data){
 
 void export_usage(string kname, double data) {
   char filename[100];
-  sprintf(filename, "/kubeshare/scheduler/total-usage-%s", kname.c_str());
+  sprintf(filename, "/sys/kernel/gpu/IDs/%s/total_runtime", kname.c_str());
   // INFO("%s totalusage: %f ", kname.c_str(), data);
   export_data(filename, data);
 }
 
-void export_quota(string kname, double data) {
-  char filename[100];
-  sprintf(filename, "/kubeshare/scheduler/assiged-quota-%s", kname.c_str());
-  // INFO("%s assigedquota: %f ", kname.c_str(), data);
-  export_data(filename, data);
-}
+// void export_quota(string kname, double data) {
+//   char filename[100];
+//   sprintf(filename, "/kubeshare/scheduler/assiged-quota-%s", kname.c_str());
+//   // INFO("%s assigedquota: %f ", kname.c_str(), data);
+//   export_data(filename, data);
+// }
 
 /**
  * Update the end time of client's usage according to the overuse information provided when client
@@ -174,7 +174,8 @@ void ClientGroup::updateReturnTime(double overuse) {
       latest_actual_usage_ = it->end - it->start;
       total_actual_usage_ += latest_actual_usage_;
       // INFO("Actal_usage = %f, %f", latest_actual_usage_, total_actual_usage_);
-      export_usage(kName, total_actual_usage_);
+      // export_usage(kName, total_actual_usage_);
+      export_usage(kName, latest_actual_usage_);
       break;
     }
   }
@@ -221,7 +222,7 @@ void ClientGroup::updateQuota() {
     quota_ = std::max(quota_, kMinQuota);   // lowerbound
     quota_ = std::min(quota_, max_quota_);  // upperbound
     // INFO("Assigned Quota = %f, Min %f Max %f", quota_, kMinQuota, max_quota_);
-    export_quota(kName, quota_);
+    // export_quota(kName, quota_);
     DEBUG("%s: burst: %.3fms, assign quota: %.3fms", kName.c_str(), burst_, quota_);
   }
 }
