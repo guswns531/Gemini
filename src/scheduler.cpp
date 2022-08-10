@@ -141,15 +141,16 @@ void ClientGroup::updateConstraint(double minf, double maxf, double maxq, size_t
 
 void export_data(char* filename, double data){
   FILE *f = fopen(filename, "w");
-  fprintf(f, "%f\n", data);
+  fprintf(f, "%ld\n", (long)(data * 1000000));
   fclose(f);
 }
 
 void export_usage(string kname, double data) {
   char filename[100];
   sprintf(filename, "/sys/kernel/gpu/IDs/%s/total_runtime", kname.c_str());
-  // INFO("%s totalusage: %f ", kname.c_str(), data);
+  DEBUG("%s totalusage: %f ", filename, data * 1000000);
   export_data(filename, data);
+  DEBUG("END Export %s totalusage: %ld ", filename, (long)(data * 1000000));
 }
 
 /**
@@ -659,7 +660,6 @@ int main(int argc, char *argv[]) {
 
 #ifdef _DEBUG
   // register signal handler for debugging
-  signal(SIGSEGV, segvHandler);
   if (verbosity > 0) signal(SIGINT, dump_history);
 #endif
 
