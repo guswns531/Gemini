@@ -718,15 +718,6 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-void segvHandler(int sig) {
-  void *arr[10];
-  size_t s;
-  s = backtrace(arr, 10);
-  ERROR("Received signal %d", sig);
-  backtrace_symbols_fd(arr, s, STDERR_FILENO);
-  exit(sig);
-}
-
 #ifdef _DEBUG
 // write full history to a json file
 void dump_history(int sig) {
