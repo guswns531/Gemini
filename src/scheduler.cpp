@@ -139,6 +139,19 @@ void ClientGroup::updateConstraint(double minf, double maxf, double maxq, size_t
   mem_limit_ = mem_limit;
 }
 
+void export_data(char* filename, double data){
+  FILE *f = fopen(filename, "w");
+  fprintf(f, "%f\n", data);
+  fclose(f);
+}
+
+void export_usage(string kname, double data) {
+  char filename[100];
+  sprintf(filename, "/sys/kernel/gpu/IDs/%s/total_runtime", kname.c_str());
+  // INFO("%s totalusage: %f ", kname.c_str(), data);
+  export_data(filename, data);
+}
+
 /**
  * Update the end time of client's usage according to the overuse information provided when client
  * sends another token request, and also the timing when token request is received.
@@ -151,6 +164,7 @@ void ClientGroup::updateReturnTime(double overuse) {
       // client may not use up all of the allocated time
       it->end = std::min(now, it->end + overuse);
       latest_actual_usage_ = it->end - it->start;
+      export_usage(kName, latest_actual_usage_);
       break;
     }
   }
