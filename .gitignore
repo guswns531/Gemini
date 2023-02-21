@@ -1,7 +1,7 @@
 .vscode/
 bin/
 lib/
-*.o
+src/*.o
 gem-schd
 gem-pmgr
 libgemhook.so.1

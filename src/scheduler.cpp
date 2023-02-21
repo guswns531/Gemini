@@ -139,18 +139,26 @@ void ClientGroup::updateConstraint(double minf, double maxf, double maxq, size_t
   mem_limit_ = mem_limit;
 }
 
-void export_data(char* filename, double data){
+void exportData(char* filename, double data){
   FILE *f = fopen(filename, "w");
   fprintf(f, "%ld\n", (long)(data * 1000000));
   fclose(f);
 }
 
-void export_usage(string kname, double data) {
+void exportGPURuntime(string kname, double data) {
   char filename[100];
   sprintf(filename, "/sys/kernel/gpu/IDs/%s/total_runtime", kname.c_str());
-  DEBUG("%s totalusage: %f ", filename, data * 1000000);
+  DEBUG("%s GPU total runtime: %f ", filename, data * 1000000);
+  exportData(filename, data);
+  DEBUG("END Export %s total runtime: %ld ", filename, (long)(data * 1000000));
+}
+
+void exportGPUMemoryUsage(string kname, double data) {
+  char filename[100];
+  sprintf(filename, "/sys/kernel/gpu/IDs/%s/gpu_memory_used", kname.c_str());
+  DEBUG("%s GPU Memory Used: %f ", filename, data); // Bytes
   export_data(filename, data);
-  DEBUG("END Export %s totalusage: %ld ", filename, (long)(data * 1000000));
+  DEBUG("END Export %s GPU Memory Used: %ld ", filename, (long)(data));
 }
 
 /**
@@ -165,7 +173,7 @@ void ClientGroup::updateReturnTime(double overuse) {
       // client may not use up all of the allocated time
       it->end = std::min(now, it->end + overuse);
       latest_actual_usage_ = it->end - it->start;
-      export_usage(kName, latest_actual_usage_);
+      exportGPURuntime(kName, latest_actual_usage_);
       break;
     }
   }
@@ -537,8 +545,9 @@ void *clientGroupMgmt(void *args) {
         total_used_memory -= std::min(mem_alloc_req.deltaSize(), total_used_memory);
         peers_status[req.from()].first -=
             std::min(mem_alloc_req.deltaSize(), peers_status[req.from()].first);
-        rsp = new MemAllocResponse(true);
+        rsp = new MemAllocResponse(true); 
       }
+      exportGPUMemoryUsage(group->getName(),total_used_memory);
     } else if (req.what() == kToken) {
       TokenRequest token_req(req);
       double remain = duration_cast<milliseconds>(token_expire - steady_clock::now()).count();
