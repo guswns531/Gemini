@@ -157,7 +157,7 @@ void exportGPUMemoryUsage(string kname, double data) {
   char filename[100];
   sprintf(filename, "/sys/kernel/gpu/IDs/%s/gpu_memory_used", kname.c_str());
   DEBUG("%s GPU Memory Used: %f ", filename, data); // Bytes
-  export_data(filename, data);
+  exportData(filename, data);
   DEBUG("END Export %s GPU Memory Used: %ld ", filename, (long)(data));
 }
 
