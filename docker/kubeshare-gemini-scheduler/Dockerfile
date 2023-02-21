@@ -6,7 +6,7 @@ FROM nvidia/cuda:11.2.2-devel AS build
 WORKDIR /tmp/build
 
 COPY . Gemini
-COPY ./docker/gemini-lib/libdl.so.2          /lib
+COPY ./gemini-lib/libdl.so.2          /lib
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
 
