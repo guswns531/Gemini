@@ -266,6 +266,9 @@ vector<ClientGroup *> read_resource_config(const char *file_path) {
   return new_client_groups;
 }
 
+
+void throttled_candidate(int name) { DEBUG("throttled_candidate %d", name); }
+
 /**
  * Select a candidate whose current usage is less than its limit, and erase it from waiting
  * candidates. If no such candidate exists, calculate the time until time window content changes and
@@ -380,6 +383,8 @@ Candidate select_candidate() {
       remaining = limit - usage[name];
       if (remaining > 0)
         vaild_candidates.push_back({missing, remaining, usage[name], it->arrived_time, it});
+      else
+        throttled_candidate(stoi(name)); 
     }
 
     if (vaild_candidates.size() == 0) {

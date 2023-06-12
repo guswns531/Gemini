@@ -704,7 +704,7 @@ void initialize() {
   // generate random client identifier
   srand(getpid() ^ time(nullptr));
   snprintf(client_random_id, sizeof(client_random_id), "%08x", rand());
-
+  DEBUG("Gemini hook init");
   // host-side synchronous calls
   hook_inf.preHooks[CU_HOOK_MEMCPY_ATOH] = (void *)cuMemcpyAtoH_prehook;
   hook_inf.preHooks[CU_HOOK_MEMCPY_DTOH] = (void *)cuMemcpyDtoH_prehook;

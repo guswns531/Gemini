@@ -1,16 +1,21 @@
 # call from repo root
 
 # FROM nvidia/cuda:10.0-devel AS build
-FROM nvidia/cuda:11.2.2-devel AS build
+# FROM nvidia/cuda:11.2.2-devel AS build
+FROM nvidia/cuda:11.4.0-devel-ubuntu18.04 AS build
 
 WORKDIR /tmp/build
 
+
+COPY . Gemini
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+
 RUN apt update && \
-    apt install -y git && \
-    git clone https://github.com/guswns531/Gemini.git && cd Gemini && \
-    sh install.sh && \
-    # export DEBUG=1 && \
-    make -C src
+    apt install -y git python3 && \
+    DEBIAN_FRONTEND=noninteractive TZ=Asia/Seoul apt-get install -y libglib2.0 libzmq3-dev  &&\
+    cd Gemini && \
+    make -C src DEBUG=1
 
 # FROM busybox:1.31.1-glibc
 FROM alpine:3.9

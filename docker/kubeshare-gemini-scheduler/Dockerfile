@@ -1,7 +1,8 @@
 # call from repo root
 
 #FROM nvidia/cuda:10.0-devel AS build
-FROM nvidia/cuda:11.2.2-devel AS build
+# FROM nvidia/cuda:11.2.2-devel AS build
+FROM nvidia/cuda:11.4.0-devel-ubuntu18.04 AS build
 
 WORKDIR /tmp/build
 
@@ -14,7 +15,7 @@ RUN apt update && \
     apt install -y git python3 && \
     DEBIAN_FRONTEND=noninteractive TZ=Asia/Seoul apt-get install -y libglib2.0 libzmq3-dev  &&\
     cd Gemini && \
-    make -C src
+    make -C src DEBUG=1
 
 # CMD ["python3", "/tmp/build/Gemini/tools/launch-command.py", "--hook", "/kubeshare/library/libgemhook.so.1", "--name", "node4", "'/tmp/build/Gemini/bin/gem-schd -f /kubeshare/scheduler/resource.conf'"]
 
@@ -35,7 +36,7 @@ COPY ./docker/lib/libdl.so.2          /lib
 COPY ./docker/lib/libnvidia-ml.so.1   /lib
 COPY ./docker/lib/libnorm.so.1   /lib
 COPY ./docker/lib/libpgm-5.2.so.0   /lib
-COPY ./docker/liblibsodium.so.23   /lib
+COPY ./docker/lib/libsodium.so.23   /lib
 COPY ./docker/lib/libzmq.so.5   /lib
 
 # COPY --from=build /tmp/build/kubeshare/docker/kubeshare-gemini-scheduler/launcher-multigpus.sh /launcher-multigpus.sh

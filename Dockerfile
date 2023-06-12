@@ -1,7 +1,9 @@
 # call from repo root
 
 #FROM nvidia/cuda:10.0-devel AS build
-FROM nvidia/cuda:11.2.2-devel AS build
+# FROM nvidia/cuda:11.2.2-devel AS build
+FROM nvidia/cuda:11.4.0-devel-ubuntu18.04 AS build
+
 
 WORKDIR /tmp/build
 

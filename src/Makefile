@@ -22,13 +22,13 @@ PKGCONFIG = /usr/bin/pkg-config
 SMS ?= 86
 GENCODE_FLAGS += $(foreach sm,$(SMS),-gencode arch=compute_$(sm),code=sm_$(sm))
 
-CXX ?= g++
+CXX ?= g++-8
 NVCC ?= $(CUDA_PATH)/bin/nvcc -ccbin $(CXX)
 
 CUDA_LDFLAGS += -lcuda -L$(CUDA_PATH)/lib64 -L$(CUDA_PATH)/lib64/stubs
 LDFLAGS += -ldl -lrt
 
-CXXFLAGS += -fPIC
+CXXFLAGS += -std=c++11 -fPIC
 
 ifeq ($(DEBUG),1)
 CXXFLAGS += -g -D_DEBUG -Wall
