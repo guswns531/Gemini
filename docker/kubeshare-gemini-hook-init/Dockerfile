@@ -15,16 +15,16 @@ RUN apt update && \
     apt install -y git python3 && \
     DEBIAN_FRONTEND=noninteractive TZ=Asia/Seoul apt-get install -y libglib2.0 libzmq3-dev  &&\
     cd Gemini && \
-    make -C src DEBUG=1
+    make -C src #DEBUG=1
 
 # FROM busybox:1.31.1-glibc
 FROM alpine:3.9
 
 COPY --from=build /tmp/build/Gemini/lib/libgemhook.so.1 /libgemhook.so.1
-COPY docker/lib/libnorm.so.1  /libnorm.so.1
-COPY docker/lib/libpgm-5.2.so.0  /libpgm-5.2.so.0
-COPY docker/lib/libsodium.so.23  /libsodium.so.23
-COPY docker/lib/libzmq.so.5  /libzmq.so.5
+COPY --from=build /usr/lib/x86_64-linux-gnu/libnorm.so.1  /libnorm.so.1
+COPY --from=build /usr/lib/x86_64-linux-gnu/libpgm-5.2.so.0 /libpgm-5.2.so.0
+COPY --from=build /usr/lib/x86_64-linux-gnu/libsodium.so.23  /libsodium.so.23
+COPY --from=build /usr/lib/x86_64-linux-gnu/libzmq.so.5  /libzmq.so.5
 COPY docker/lib/copylib.sh /copylib.sh
 
 RUN chmod 777 /copylib.sh
